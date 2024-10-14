@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        #timer {
+            font-size: 4rem;
+            margin: 2rem 0;
+            color: #4CAF50;
+        }
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #startBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #startBtn:hover {
+            background-color: #45a049;
+        }
+        #resetBtn {
+            background-color: #f44336;
+            color: white;
+        }
+        #resetBtn:hover {
+            background-color: #da190b;
+        }
+        #modeToggle {
+            background-color: #2196F3;
+            color: white;
+        }
+        #modeToggle:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+        <div id="timer">25:00</div>
+        <div id="controls">
+            <button id="startBtn">Start</button>
+            <button id="resetBtn">Reset</button>
+            <button id="modeToggle">Switch to Break</button>
+        </div>
+    </div>
+
+    <script>
+        const timer = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const modeToggle = document.getElementById('modeToggle');
+
+        let interval;
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let isRunning = false;
+        let isWorkMode = true;
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                startBtn.textContent = 'Pause';
+                interval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(interval);
+                        isRunning = false;
+                        startBtn.textContent = 'Start';
+                        alert(isWorkMode ? 'Work session complete! Take a break.' : 'Break time over! Back to work.');
+                        toggleMode();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(interval);
+                isRunning = false;
+                startBtn.textContent = 'Resume';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(interval);
+            isRunning = false;
+            timeLeft = isWorkMode ? 25 * 60 : 5 * 60;
+            updateDisplay();
+            startBtn.textContent = 'Start';
+        }
+
+        function toggleMode() {
+            isWorkMode = !isWorkMode;
+            timeLeft = isWorkMode ? 25 * 60 : 5 * 60;
+            updateDisplay();
+            modeToggle.textContent = isWorkMode ? 'Switch to Break' : 'Switch to Work';
+            timer.style.color = isWorkMode ? '#4CAF50' : '#2196F3';
+            resetTimer();
+        }
+
+        startBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        modeToggle.addEventListener('click', toggleMode);
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>
